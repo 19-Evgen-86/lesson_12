@@ -1,11 +1,12 @@
 import json
+import logging as logging
 from dataclasses import dataclass
 from re import split
 
 POST_PATH = "posts.json"
 # допустимые расширения для загружаемого файла
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
+logging.basicConfig(filename="log.log", level=logging.INFO)
 
 class MyException(Exception):
     pass
@@ -28,9 +29,9 @@ class PostsManager:
             with open(self.file_json, encoding='utf-8') as file:
                 self.data_json = json.load(file)
         except FileNotFoundError:
-            raise MyException("Файл json не найден!.")
+            raise MyException("Файл json не найден!")
         except json.JSONDecodeError:
-            raise MyException("Проблемы с json файлом")
+            raise MyException("Проблемы с json файлом!")
 
     def get_post(self, s):
         """
@@ -56,6 +57,7 @@ class PostsManager:
         try:
             with open(self.file_json, "w", encoding='utf-8') as file:
                 json.dump(self.data_json, file, ensure_ascii=False)
+                logging.info("Дынные в JSON добавлены")
         except json.JSONDecodeError:
             raise MyException('Не удалось сохранить json файл')
 
@@ -63,7 +65,7 @@ class PostsManager:
 try:
     posts = PostsManager(POST_PATH)
 except MyException as exc:
-    print(exc)
+    logging.error(exc)
 
 
 def allowed_extension(filename):
